@@ -49,11 +49,6 @@ fn main() {
                 }
 
                 println!("{}", game.to_string());
-
-                // println!("Current Turn: {:?}", game.current_turn);
-                // println!("Move Count: {}", game.move_count);
-                // println!("Game Status: {:?}", game.status);
-                // println!("{}", game.board.to_string());
             },
             Err(e) => println!("Something went wrong: {} {}", e, input),
         }

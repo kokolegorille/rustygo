@@ -219,7 +219,8 @@ impl Board {
 impl ToString for Board {
     fn to_string(&self) -> String {
         let mut string = String::new();
-        for x in 0..self.size {
+        // Reverse x range to display from the bottom...
+        for x in (0..self.size).rev() {
             for y in 0..self.size {
                 match self.get_go_string(Point(x, y)) {
                     Some(gs) => string.push_str(&gs.color.to_string()),
