@@ -70,13 +70,20 @@ impl GoString {
 
 #[derive(Debug)]
 pub struct Board {
-    size: usize,
-    grid: Vec<Option<GoString>>,
+    pub size: usize,
+    pub grid: Vec<Option<GoString>>,
+    pub black_captures: usize,
+    pub white_captures: usize,
 }
 
 impl Board {
     pub fn new(size: usize) -> Self {
-        Self { size, grid: vec![None; size.pow(2) ]}
+        Self { 
+            size, 
+            grid: vec![None; size.pow(2)],
+            black_captures: 0,
+            white_captures: 0,
+        }
     }
 
     pub fn place_stone(&mut self, color: Color, point: Point) -> Result<(), &'static str> {
@@ -89,9 +96,6 @@ impl Board {
                 let mut adjacent_opposite_color: Vec<GoString> = vec![];
                 let mut stones: Vec<Point> = vec![point];
                 let mut liberties: Vec<Point> = vec![];
-
-                // println!("Color: {:?}", color);
-                // println!("Point: {:?}", point);
 
                 for neighbor in self.neighbors(&point) {
                     match self.get_go_string(neighbor) {
@@ -110,28 +114,33 @@ impl Board {
                     }
                 }
 
-                // println!("Liberties: {:?}", liberties);
-
                 for same_color_string in adjacent_same_color {
                     stones.extend_from_slice(&same_color_string.stones);
                     liberties.extend_from_slice(&same_color_string.liberties);
                     liberties.retain(|el| ! stones.contains(el))
                 }
 
-                // println!("Stones: {:?}", stones);
-                // println!("Liberties: {:?}", liberties);
-
                 let num_liberties = liberties.len();
-                let kill = adjacent_opposite_color
+
+                // Store killed stones in a vector, for later use with zobrist hash
+                let killed: Vec<Point> = adjacent_opposite_color
                     .iter()
-                    .any(|gs| gs.num_liberties() == 1);
+                    .filter(|gs| gs.num_liberties() == 1)
+                    .flat_map(|gs| gs.stones.clone())
+                    .collect();
+                let num_killed = killed.len();
 
                 let go_string = GoString::new(color, stones, liberties);
 
-                // Check if liberties = 0 and killed = [] !
-
-                if num_liberties > 0 || kill {
+                if num_liberties > 0 || num_killed > 0 {
                     self.replace_string(&go_string);
+
+                    if num_killed > 0 {
+                        match color {
+                            Color::Black => self.black_captures += num_killed,
+                            Color::White => self.white_captures += num_killed,
+                        }
+                    }
 
                     for mut other_color_string in adjacent_opposite_color {
                         other_color_string.without_liberty(point);

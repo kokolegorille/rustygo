@@ -69,3 +69,15 @@ impl Game {
         Ok(Move::Resign(self.current_turn))
     }
 }
+
+impl ToString for Game {
+    fn to_string(&self) -> String {
+        let mut string = String::new();
+        string.push_str(&format!("Current Turn: {:?}\n", self.current_turn));
+        string.push_str(&format!("Move Count: {:?}\n", self.move_count));
+        string.push_str(&format!("Game Status: {:?}\n", self.status));
+        string.push_str(&format!("Captures: W {}, B {}\n", self.board.white_captures, self.board.black_captures));
+        string.push_str(&format!("{}", self.board.to_string()));
+        string
+    }
+}
