@@ -1,5 +1,5 @@
 [package]
-name = "go"
+name = "rustygo"
 version = "0.1.0"
 authors = ["kokolegorille <koko.le.gorille@gmail.com>"]
 edition = "2018"

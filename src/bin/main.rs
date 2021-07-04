@@ -1,7 +1,7 @@
-extern crate go;
+extern crate rustygo;
 
-use go::game::{Game, GameStatus};
-use go::board::{Point};
+use rustygo::game::{Game, GameStatus};
+use rustygo::board::{Point};
 
 use std::io;
 

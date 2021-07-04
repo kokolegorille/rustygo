@@ -39,7 +39,9 @@ impl Game {
         let play_move = Move::Play(self.current_turn, point);
         match self.board.place_stone(self.current_turn, point) {
             Ok(_) => {
-                // If move is valid... place stone on board
+                // Check for ko rule, to see if move is valid... 
+                // then, place stone on board
+                
                 self.move_count += 1;
                 self.consecutive_passes = 0;
                 self.current_turn = self.current_turn.next();
